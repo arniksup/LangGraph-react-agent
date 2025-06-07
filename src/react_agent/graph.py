@@ -3,17 +3,22 @@
 Works with a chat model with tool calling support.
 """
 
-from datetime import UTC, datetime
+from datetime import datetime
+try:
+    from datetime import UTC
+except ImportError:
+    from datetime import timezone
+    UTC = timezone.utc
 from typing import Dict, List, Literal, cast
 
-from langchain_core.messages import AIMessage
+from langchain_core.messages.ai import AIMessage
 from langgraph.graph import StateGraph
 from langgraph.prebuilt import ToolNode
 
-from react_agent.configuration import Configuration
-from react_agent.state import InputState, State
-from react_agent.tools import TOOLS
-from react_agent.utils import load_chat_model
+from src.react_agent.configuration import Configuration
+from src.react_agent.state import InputState, State
+from src.react_agent.tools import TOOLS
+from src.react_agent.utils import load_chat_model
 
 # Define the function that calls the model
 

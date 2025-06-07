@@ -10,7 +10,7 @@ from typing import Any, Callable, List, Optional, cast
 
 from langchain_tavily import TavilySearch  # type: ignore[import-not-found]
 
-from react_agent.configuration import Configuration
+from src.react_agent.configuration import Configuration
 
 
 async def search(query: str) -> Optional[dict[str, Any]]:
