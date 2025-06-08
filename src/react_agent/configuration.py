@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field, fields
-from typing import Annotated
+import os
 
-from langchain_core.runnables import ensure_config
+from dataclasses import dataclass, field, fields
+from typing import Annotated, Optional, Any
+
+from langchain_core.runnables import ensure_config, RunnableConfig
 from langgraph.config import get_config
 
 from src.react_agent import prompts
@@ -14,6 +16,9 @@ from src.react_agent import prompts
 @dataclass(kw_only=True)
 class Configuration:
     """The configuration for the agent."""
+
+    user_id: str = "default"
+    """The ID of the user to remember in the conversation."""
 
     system_prompt: str = field(
         default=prompts.SYSTEM_PROMPT,
@@ -49,3 +54,19 @@ class Configuration:
         configurable = config.get("configurable") or {}
         _fields = {f.name for f in fields(cls) if f.init}
         return cls(**{k: v for k, v in configurable.items() if k in _fields})
+
+    @classmethod
+    def from_runnable_config(
+            cls, config: Optional[RunnableConfig] = None
+    ) -> "Configuration":
+        """Create a Configuration instance from a RunnableConfig."""
+        configurable = (
+            config["configurable"] if config and "configurable" in config else {}
+        )
+        values: dict[str, Any] = {
+            f.name: os.environ.get(f.name.upper(), configurable.get(f.name))
+            for f in fields(cls)
+            if f.init
+        }
+
+        return cls(**{k: v for k, v in values.items() if v})

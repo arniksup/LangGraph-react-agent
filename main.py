@@ -61,9 +61,6 @@ async def chat_agent(request: Request):
         logger.error(f"Error: {str(e)}")
         raise
 
-
-    response = 0
-
     return {
         "response": response,
         "session_id": session_id
